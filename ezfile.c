@@ -1,8 +1,6 @@
 //usr/bin/cc -x c -O2 -Wall -lpthread -o .buildbin "$0" && ./.buildbin; exit
 
 #include "ez.h"
-#include <math.h>
-#include <unistd.h>
 
 void cc(char *in, char *out) {
     Command *cmd = cmd_new();

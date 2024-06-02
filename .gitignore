@@ -13,3 +13,5 @@ nohup.out
 *~
 *.err
 *.out
+.buildbin
+out

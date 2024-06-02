@@ -43,8 +43,8 @@
 
 extern int verbosity;
 
-long long tot_aio_queries = 0, active_aio_queries = 0, expired_aio_queries = 0;
-double total_aio_time;
+static long long tot_aio_queries = 0, active_aio_queries = 0, expired_aio_queries = 0;
+static double total_aio_time;
 
 struct {
   int fd, flags;

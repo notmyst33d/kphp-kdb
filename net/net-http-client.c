@@ -553,12 +553,6 @@ int htc_alarm (struct connection *c) {
   return 0;
 }
 
-int hts_do_wakeup (struct connection *c) {
-  //struct htc_data *D = HTC_DATA(c);
-  assert (0);
-  return 0;
-}
-
 /*
  *
  *		USEFUL HTTP FUNCTIONS

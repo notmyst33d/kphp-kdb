@@ -34,6 +34,7 @@
 #include <sys/types.h>
 #include <aio.h>
 #include <errno.h>
+#include <time.h>
 
 #include "crc32.h"
 #include "md5.h"

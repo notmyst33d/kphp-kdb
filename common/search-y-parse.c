@@ -33,10 +33,6 @@
 #include "word-split.h"
 #include "stemmer-new.h"
 
-int searchy_is_term (hash_t word) {
-  return (word & 0x8000000000000000ULL) ? 1 : 0;
-}
-
 unsigned long long searchy_word_hash (const char *str, int len) {
   unsigned long long h = word_hash (str, len);
   h &= 0x7fffffffffffffffULL;

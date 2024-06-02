@@ -63,7 +63,7 @@ typedef struct {
   searchy_query_phrase_t *last_phrase;
 } searchy_query_t;
 
-extern inline int searchy_is_term (hash_t word) {
+inline int searchy_is_term (hash_t word) {
   return (word & 0x8000000000000000ULL) ? 1 : 0;
 }
 

@@ -44,8 +44,8 @@ struct aio_connection {
   int queries_ok;
 };
 
-extern long long tot_aio_queries, active_aio_queries, expired_aio_queries;
-extern double total_aio_time;
+static long long tot_aio_queries, active_aio_queries, expired_aio_queries;
+static double total_aio_time;
 
 struct aio_connection *create_aio_read_connection (int fd, void *target, off_t offset, int len, conn_type_t *type, void *extra);
 int check_aio_completion (struct aio_connection *a);

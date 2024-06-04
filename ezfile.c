@@ -278,7 +278,7 @@ void build_kphp_runtime(void) {
     cxx("KPHP/runtime/zlib.cpp", "out/KPHP/runtime/zlib.o");
 }
 
-void link_kphp_runtime(void) {
+void link_kphp_engine(void) {
     ld("out/kphp-engine.o", (char*[]){
         "out/KPHP/php-engine.o",
         "out/KPHP/php-engine-vars.o",
@@ -351,13 +351,12 @@ void link_component_engine(char *component) {
 void link_component_kphp(char *component) {
     int all = strcmp(component, "all") == 0;
     if (strcmp(component, "kphp-compiler") == 0 || all) link_kphp_compiler();
-    if (strcmp(component, "kphp-runtime") == 0 || all) link_kphp_runtime();
+    if (strcmp(component, "kphp-engine") == 0 || all) link_kphp_engine();
 }
 
 #define component_argv(func) do { \
     if (argc > 1) { \
         for (int i = 1; i < argc; i++) { \
-            INFO("%s", argv[i]); \
             func(argv[i]); \
         } \
     } else { \

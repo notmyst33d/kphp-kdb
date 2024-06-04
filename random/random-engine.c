@@ -43,6 +43,10 @@
 #include "vv-tl-parse.h"
 #include "vv-tl-aio.h"
 
+char *sql_username = "boxed";
+char *sql_password = "password";
+char *sql_database = "boxed_base";
+
 #define	VERSION_STR "random-engine-1.02"
 static const char FullVersionStr[] = VERSION_STR " compiled at " __DATE__ " " __TIME__ " by gcc " __VERSION__ " "
 #ifdef __LP64__

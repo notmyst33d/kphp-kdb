@@ -255,7 +255,7 @@ template <Operation Op> size_t vertex_inner_shift (int args_n) {
 }
 
 template <Operation Op>
-vertex_inner <Op> *raw_create_vertex_inner (int args_n, vertex_inner <Op> *from_ptr = NULL) {
+vertex_inner <Op> *raw_create_vertex_inner (int args_n, vertex_inner <Op> *from_ptr) {
   size_t size = vertex_inner_size <Op> (args_n);
   size_t shift = vertex_inner_shift <Op> (args_n);
   PROF (vertex_inner).alloc_memory (size);

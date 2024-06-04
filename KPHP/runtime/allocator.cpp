@@ -466,7 +466,7 @@ void free_replace (void *p) {
 }
 
 //replace global operators new and delete for linked C++ code
-void *operator new (std::size_t n) throw (std::bad_alloc) {
+void *operator new (std::size_t n) throw () {
   return dl::malloc_replace (n);
 }
 
@@ -474,7 +474,7 @@ void *operator new (std::size_t n, const std::nothrow_t &) throw() {
   return dl::malloc_replace (n);
 }
 
-void *operator new[] (std::size_t n) throw (std::bad_alloc) {
+void *operator new[] (std::size_t n) throw () {
   return dl::malloc_replace (n);
 }
 

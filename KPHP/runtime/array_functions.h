@@ -37,10 +37,10 @@ array <string> f$explode (const string &delimiter, const string &str, int limit 
 
 
 template <class T>
-array < array <T> > f$array_chunk (const array <T> &a, int chunk_size, bool preserve_keys = false);
+array < array <T> > f$array_chunk (const array <T> &a, int chunk_size, bool preserve_keys);
 
 template <class T>
-array <T> f$array_slice (const array <T> &a, int offset, int length = INT_MAX, bool preserve_keys = false);
+array <T> f$array_slice (const array <T> &a, int offset, int length, bool preserve_keys);
 
 template <class T>
 array <T> f$array_splice (array <T> &a, int offset, int length = INT_MAX);
@@ -279,7 +279,7 @@ string f$implode (const string &s, const array <T> &a) {
 
 
 template <class T>
-array <array <T> > f$array_chunk (const array <T> &a, int chunk_size, bool preserve_keys = false) {
+array <array <T> > f$array_chunk (const array <T> &a, int chunk_size, bool preserve_keys) {
   if (chunk_size <= 0) {
     php_warning ("Parameter chunk_size if function array_chunk must be positive");
     return array <array <T> > ();
@@ -315,7 +315,7 @@ array <array <T> > f$array_chunk (const array <T> &a, int chunk_size, bool prese
 }
 
 template <class T>
-array <T> f$array_slice (const array <T> &a, int offset, int length = INT_MAX, bool preserve_keys = false) {
+array <T> f$array_slice (const array <T> &a, int offset, int length, bool preserve_keys) {
   if (length == 0) {
     length = INT_MAX;
   }
@@ -464,9 +464,9 @@ T f$array_merge (const T &a1, const T &a2) {
 }
 
 template <class T>
-T f$array_merge (const T &a1, const T &a2, const T &a3, const T &a4  = T(), const T &a5  = T(), const T &a6  = T(),
-                                                        const T &a7  = T(), const T &a8  = T(), const T &a9  = T(),
-                                                        const T &a10 = T(), const T &a11 = T(), const T &a12 = T()) {
+T f$array_merge (const T &a1, const T &a2, const T &a3, const T &a4,  const T &a5,  const T &a6,
+                                                        const T &a7,  const T &a8,  const T &a9,
+                                                        const T &a10, const T &a11, const T &a12) {
   T result (a1.size() + a2.size() + a3.size() + a4.size() + a5.size() + a6.size() + a7.size() + a8.size() + a9.size() + a10.size() + a11.size() + a12.size());
   result.merge_with (a1);
   result.merge_with (a2);

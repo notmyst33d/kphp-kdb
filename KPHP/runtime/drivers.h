@@ -508,7 +508,7 @@ int db_get_num_rows (const MyDB &db);
 int db_get_insert_id (const MyDB &db);
 
 template <class T>
-array <string> db_compile_db_insert_string (const MyDB &db, const array <T> &data, bool no_escape = false);
+array <string> db_compile_db_insert_string (const MyDB &db, const array <T> &data, bool no_escape);
 
 template <class T>
 string db_compile_db_update_string (const MyDB &db, const array <T> &data);

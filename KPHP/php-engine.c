@@ -1163,7 +1163,7 @@ void php_worker_set_result (php_worker *worker, script_result *res) {
               0,
               res->body_len,
               res->headers,
-              "text/html; charset=windows-1251"
+              "text/html; charset=utf-8"
               );
         } else {
           write_out (&worker->conn->Out, res->headers, res->headers_len);

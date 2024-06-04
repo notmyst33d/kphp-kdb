@@ -1290,7 +1290,7 @@ void init_static (void) {
   string date = f$gmdate (HTTP_DATE);
   static_SB_spare.clean() + "Date: " + date;
   header (static_SB_spare.c_str(), (int)static_SB_spare.size());
-  header ("Content-Type: text/html; charset=windows-1251", 45);
+  header ("Content-Type: text/html; charset=utf-8", 38);
 
   INIT_VAR(bool, empty_bool);
   INIT_VAR(int, empty_int);

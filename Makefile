@@ -27,13 +27,13 @@ endif
 # CWARN = -Wall -Werror -Wno-error=unused-result -Wno-error=unused-but-set-variable
 CWARN = -Wall
 
-CFLAGS = ${CWARN} ${OPT} ${MF} -march=core2 -mfpmath=sse -mssse3 -ggdb -fno-strict-aliasing -fno-strict-overflow -fwrapv ${PROFC}
+CFLAGS = ${CWARN} ${OPT} ${MF} -march=core2 -mfpmath=sse -mssse3 -ggdb -fno-strict-aliasing -fno-strict-overflow -fwrapv -fcommon ${PROFC}
 
 ifeq (${fp}, 1)
 CFLAGS := ${CFLAGS} -fno-omit-frame-pointer
 endif
 
-CXXFLAGS = ${CFLAGS} -fno-omit-frame-pointer
+CXXFLAGS = ${CFLAGS} -std=gnu++17 -fno-omit-frame-pointer
 
 DFLAGS = -M
 LDFLAGS = ${MF} -ggdb -rdynamic ${PROF} -lm -lrt -lcrypto -lz -lpthread

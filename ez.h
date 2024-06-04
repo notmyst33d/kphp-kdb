@@ -14,9 +14,18 @@
 #define CC "cc"
 #endif
 
+#ifndef CXX
+#define CXX "c++"
+#endif
+
 #ifndef THREADS
 #define THREADS 16
 #endif
+
+typedef enum {
+    COMPILER_CC,
+    COMPILER_CXX,
+} Compiler;
 
 #define BLUE "\x1b[34m"
 #define RED "\x1b[31m"
@@ -177,14 +186,19 @@ void queue_start(CommandQueue *queue, pthread_t *thread_pool, int thread_count) 
 #define global_queue_wait() queue_wait(&global_queue, global_thread_pool, THREADS)
 #define global_queue_shutdown() queue_shutdown(&global_queue, global_thread_pool, THREADS)
 
-void queue_cc(CommandQueue *queue, char *in, char *out, char **flags) {
+void queue_compile(CommandQueue *queue, char *in, char *out, char **flags, Compiler compiler) {
     Command *cmd = cmd_new();
     char message[512];
 
-    sprintf(message, CC " %s", in);
-    cmd_message(cmd, message);
-
-    cmd_push(cmd, CC);
+    if (compiler == COMPILER_CXX) {
+        sprintf(message, CXX " %s", in);
+        cmd_message(cmd, message);
+        cmd_push(cmd, CXX);
+    } else {
+        sprintf(message, CC " %s", in);
+        cmd_message(cmd, message);
+        cmd_push(cmd, CC);
+    }
     for (int i = 0; flags[i] != 0; i++) {
         cmd_push(cmd, flags[i]);
     }
@@ -196,7 +210,7 @@ void queue_cc(CommandQueue *queue, char *in, char *out, char **flags) {
     queue_push(queue, cmd);
 }
 
-void queue_ld(CommandQueue *queue, char *out, char **objs, char **flags) {
+void queue_link(CommandQueue *queue, char *out, char **objs, char **flags, Compiler compiler) {
     Command *cmd = cmd_new();
     char message[512];
 
@@ -207,7 +221,11 @@ void queue_ld(CommandQueue *queue, char *out, char **objs, char **flags) {
 #endif
     cmd_message(cmd, message);
 
-    cmd_push(cmd, CC);
+    if (compiler == COMPILER_CXX) {
+        cmd_push(cmd, CXX);
+    } else {
+        cmd_push(cmd, CC);
+    }
 #ifdef USE_LD
     cmd_push(cmd, "-fuse-ld=" LD);
 #endif
@@ -223,10 +241,10 @@ void queue_ld(CommandQueue *queue, char *out, char **objs, char **flags) {
     queue_push(queue, cmd);
 }
 
-void global_queue_cc(char *in, char *out, char **flags) {
-    queue_cc(&global_queue, in, out, flags);
+void global_queue_compile(char *in, char *out, char **flags, Compiler compiler) {
+    queue_compile(&global_queue, in, out, flags, compiler);
 }
 
-void global_queue_ld(char *out, char **objs, char **flags) {
-    queue_ld(&global_queue, out, objs, flags);
+void global_queue_link(char *out, char **objs, char **flags, Compiler compiler) {
+    queue_link(&global_queue, out, objs, flags, compiler);
 }

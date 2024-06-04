@@ -22,5 +22,5 @@ $ ./out/random-engine -vvvv -p 11211 ./out/random.bin &
 $ ./out/kphp_program/main -q -H 10203
 ```
 
-Результат:
+Результат:  
 ![](docs/result.jpg)

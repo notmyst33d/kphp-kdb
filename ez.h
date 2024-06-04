@@ -151,6 +151,7 @@ void queue_shutdown(CommandQueue *queue, pthread_t *thread_pool, int thread_coun
     for (int i = 0; i < thread_count; i++) {
         pthread_join(thread_pool[i], 0);
     }
+    free(queue->cmds);
 }
 
 int queue_wait(CommandQueue *queue, pthread_t *thread_pool, int thread_count) {

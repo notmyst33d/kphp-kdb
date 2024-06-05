@@ -1,4 +1,4 @@
-//usr/bin/cc -x c -O2 -Wall -lpthread -o .buildbin "$0" && ./.buildbin $@; exit
+//usr/bin/cc -x c -O2 -Wall -pthread -o .buildbin "$0" && ./.buildbin $@; exit
 
 #include "ez.h"
 

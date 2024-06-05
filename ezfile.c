@@ -252,13 +252,26 @@ void link_kphp_compiler(void) {
     }, kphp_binary, COMPILER_CXX);
 }
 
-void build_kphp_runtime(void) {
+void build_kphp_engine(void) {
     cc("KPHP/php-engine.c", "out/KPHP/php-engine.o");
     cc("KPHP/php-engine-vars.c", "out/KPHP/php-engine-vars.o");
-    cxx("KPHP/php_script.cpp", "out/KPHP/php_script.o");
     cxx("KPHP/php-queries.cpp", "out/KPHP/php-queries.o");
     cxx("KPHP/php-runner.cpp", "out/KPHP/php-runner.o");
     cxx("KPHP/php-master.cpp", "out/KPHP/php-master.o");
+}
+
+void link_kphp_engine(void) {
+    ld("out/kphp-engine.o", (char*[]){
+        "out/KPHP/php-engine.o",
+        "out/KPHP/php-engine-vars.o",
+        "out/KPHP/php-queries.o",
+        "out/KPHP/php-runner.o",
+        "out/KPHP/php-master.o", 0
+    }, kphp_engine, COMPILER_CXX);
+}
+
+void build_kphp_runtime(void) {
+    cxx("KPHP/php_script.cpp", "out/KPHP/php_script.o");
     cxx("KPHP/runtime/allocator.cpp", "out/KPHP/runtime/allocator.o");
     cxx("KPHP/runtime/array_functions.cpp", "out/KPHP/runtime/array_functions.o");
     cxx("KPHP/runtime/bcmath.cpp", "out/KPHP/runtime/bcmath.o");
@@ -278,14 +291,9 @@ void build_kphp_runtime(void) {
     cxx("KPHP/runtime/zlib.cpp", "out/KPHP/runtime/zlib.o");
 }
 
-void link_kphp_engine(void) {
-    ld("out/kphp-engine.o", (char*[]){
-        "out/KPHP/php-engine.o",
-        "out/KPHP/php-engine-vars.o",
+void link_kphp_runtime(void) {
+    ld("out/libkphp-runtime.so", (char*[]){
         "out/KPHP/php_script.o",
-        "out/KPHP/php-queries.o",
-        "out/KPHP/php-runner.o",
-        "out/KPHP/php-master.o",
         "out/KPHP/runtime/allocator.o",
         "out/KPHP/runtime/array_functions.o",
         "out/KPHP/runtime/bcmath.o",
@@ -303,7 +311,7 @@ void link_kphp_engine(void) {
         "out/KPHP/runtime/string_functions.o",
         "out/KPHP/runtime/url.o",
         "out/KPHP/runtime/zlib.o", 0
-    }, kphp_engine, COMPILER_CXX);
+    }, shared_lib, COMPILER_CXX);
 }
 
 void build_drinkless(void) {
@@ -328,6 +336,7 @@ void build_component(char *component) {
     //if (strcmp(component, "lists-engine") == 0 || all) build_lists_engine();
     if (strcmp(component, "kphp-compiler") == 0 || all) build_kphp_compiler();
     if (strcmp(component, "kphp-runtime") == 0 || all) build_kphp_runtime();
+    if (strcmp(component, "kphp-engine") == 0 || all) build_kphp_engine();
 }
 
 void link_component_base(char *component) {
@@ -351,6 +360,7 @@ void link_component_engine(char *component) {
 void link_component_kphp(char *component) {
     int all = strcmp(component, "all") == 0;
     if (strcmp(component, "kphp-compiler") == 0 || all) link_kphp_compiler();
+    if (strcmp(component, "kphp-runtime") == 0 || all) link_kphp_runtime();
     if (strcmp(component, "kphp-engine") == 0 || all) link_kphp_engine();
 }
 

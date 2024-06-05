@@ -69,7 +69,6 @@ extern const char *engine_tag;
 //do not kill more then MAX_KILL at the same time
 #define MAX_KILL 5
 
-//ATTENTION: the file has .cpp extention due to usage of "pthread_mutexattr_setrobust_np" which is by some strange reason unsupported for .c
 //ATTENTION: do NOT change this structures without changing the magic
 #define SHARED_DATA_MAGIC 0x3b720002
 #define PHP_MASTER_VERSION "0.1"
@@ -429,8 +428,8 @@ void init_mutex (pthread_mutex_t *mutex) {
   int err;
   err = pthread_mutexattr_init (&attr);
   assert (err == 0 && "failed to init mutexattr");
-  err = pthread_mutexattr_setrobust_np (&attr, PTHREAD_MUTEX_ROBUST_NP);
-  assert (err == 0 && "failed to setrobust_np for mutex");
+  err = pthread_mutexattr_setrobust (&attr, PTHREAD_MUTEX_ROBUST);
+  assert (err == 0 && "failed to setrobust for mutex");
   err = pthread_mutexattr_setpshared (&attr, PTHREAD_PROCESS_SHARED);
   assert (err == 0 && "failed to setpshared for mutex");
 
@@ -501,8 +500,8 @@ void shared_data_lock (shared_data_t *data) {
     if (err == EOWNERDEAD) {
       vkprintf (1, "owner of shared memory mutex is dead. trying to make mutex and memory consitent\n");
 
-      err = pthread_mutex_consistent_np (&data->main_mutex);
-      assert (err == 0 && "failed to make mutex constistent_np");
+      err = pthread_mutex_consistent (&data->main_mutex);
+      assert (err == 0 && "failed to make mutex constistent");
     } else {
       assert (0 && "unknown mutex lock error");
     }

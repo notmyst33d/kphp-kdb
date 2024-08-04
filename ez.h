@@ -18,6 +18,10 @@
 #define CXX "c++"
 #endif
 
+#ifndef AR
+#define AR "ar"
+#endif
+
 #ifndef THREADS
 #define THREADS 16
 #endif
@@ -241,10 +245,30 @@ void queue_link(CommandQueue *queue, char *out, char **objs, char **flags, Compi
     queue_push(queue, cmd);
 }
 
+void queue_static_link(CommandQueue *queue, char *out, char **objs) {
+    Command *cmd = cmd_new();
+    char message[512];
+
+    sprintf(message, AR " %s", out);
+    cmd_message(cmd, message);
+    cmd_push(cmd, AR);
+    cmd_push(cmd, "rcs");
+    cmd_push(cmd, out);
+    for (int i = 0; objs[i] != 0; i++) {
+        cmd_push(cmd, objs[i]);
+    }
+
+    queue_push(queue, cmd);
+}
+
 void global_queue_compile(char *in, char *out, char **flags, Compiler compiler) {
     queue_compile(&global_queue, in, out, flags, compiler);
 }
 
 void global_queue_link(char *out, char **objs, char **flags, Compiler compiler) {
     queue_link(&global_queue, out, objs, flags, compiler);
+}
+
+void global_queue_static_link(char *out, char **objs) {
+    queue_static_link(&global_queue, out, objs);
 }

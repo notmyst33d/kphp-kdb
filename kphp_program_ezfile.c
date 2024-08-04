@@ -4,8 +4,8 @@
 
 #include <dirent.h>
 
-char *cxx_compile_flags[] = { "-g", "-std=gnu++17", "-IKPHP", "-Icommon", "-Idrinkless", 0 };
-char *main_flags[] = { "-Lout", "-L/usr/lib/openssl-1.1", "-lcrypto", "-lz", "-lre2", "-lpcre", "-lkdb-common", "-lkdb-net", "-lkdb-crypto", "-lkdb-vv", "-lkdb-binlog", "-lkdb-kfs", "-ldrinkless", 0 };
+char *cxx_compile_flags[] = { "-pipe", "-g", "-std=gnu++17", "-IKPHP", "-Icommon", "-Idrinkless", 0 };
+char *main_flags[] = { "-Lout", "-L/usr/lib/openssl-1.1", "-lcrypto", "-lz", "-lre2", "-lpcre", 0 };
 
 #define cxx(in, out) global_queue_compile(in, out, cxx_compile_flags, COMPILER_CXX)
 #define ld global_queue_link
@@ -69,7 +69,7 @@ void find_kphp_output(Files *files) {
     DIR *dir = opendir("out/kphp_program/kphp");
     while ((entry = readdir(dir))) {
         size_t len = strlen(entry->d_name) + 1;
-        if (strcmp(entry->d_name + len - 5, ".cpp") == 0) {
+        if (strcmp(entry->d_name + len - 5, ".cpp") == 0 && strcmp(entry->d_name, "xmain.cpp") != 0) {
             char input_path[512] = { 0 }, output_path[512] = { 0 };
             sprintf(input_path, "out/kphp_program/kphp/%s", entry->d_name);
             sprintf(output_path, "out/kphp_program/objs/%s", entry->d_name);
@@ -89,12 +89,20 @@ void build_kphp_output(Files *files) {
 }
 
 char **link_kphp_output(Files *files) {
-    char **objs = malloc((files->length + 2) * sizeof(char*));
-    memset(objs, 0, (files->length + 2) * sizeof(char*));
-    objs[0] = "out/kphp-engine.o";
-    for (int i = 1; i < files->length; i++) {
-        objs[i] = files->files[i]->output;
+    int i = 0;
+    char **objs = malloc((files->length + 9) * sizeof(char*));
+    memset(objs, 0, (files->length + 9) * sizeof(char*));
+    objs[i++] = "out/kphp-engine.o";
+    while (i < files->length + 1) {
+        objs[i++] = files->files[i - 1]->output;
     }
+    objs[i++] = "out/libkdb-vv.a";
+    objs[i++] = "out/libkdb-net.a";
+    objs[i++] = "out/libkdb-kfs.a";
+    objs[i++] = "out/libkdb-crypto.a";
+    objs[i++] = "out/libdrinkless.a";
+    objs[i++] = "out/libkdb-common.a";
+    objs[i++] = "out/libkdb-binlog.a";
     ld("out/kphp_program/main", objs, main_flags, COMPILER_CXX);
     return objs;
 }

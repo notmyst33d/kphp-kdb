@@ -6,13 +6,14 @@ char *cc_compile_flags[] = { "-pipe", "-g", "-std=gnu89", "-fPIC", "-fcommon", "
 char *cxx_compile_flags[] = { "-pipe", "-g", "-std=gnu++17", "-fPIC", "-fcommon", "-I.", "-Ivv", "-Ikfs", "-Inet", "-Iobjs", "-Icommon", "-Ibinlog", "-Idrinkless", "-I/usr/include/openssl-1.1", "-DCOMMIT=\"none\"", 0 };
 
 char *shared_lib[] = { "-shared", 0 };
-char *kdb_binary[] = { "-Lout", "-lm", "-lz", "-lcrypto", "-lkdb-binlog", "-lkdb-common", "-lkdb-crypto", "-lkdb-kfs", "-lkdb-net", "-lkdb-vv", 0 };
-char *kphp_binary[] = { "-Lout", "-lz", "-lkdb-common", "-ldrinkless", 0 };
+char *kdb_binary[] = { "-Lout", "-lm", "-lz", "-lcrypto", 0 };
+char *kphp_binary[] = { "-Lout", "-lz", 0 };
 char *kphp_engine[] = { "-r", 0 };
 
 #define cc(in, out) global_queue_compile(in, out, cc_compile_flags, COMPILER_CC)
 #define cxx(in, out) global_queue_compile(in, out, cxx_compile_flags, COMPILER_CXX)
 #define ld global_queue_link
+#define ldlib(name, objs, compiler) global_queue_link("out/lib" name ".so", objs, shared_lib, compiler); global_queue_static_link("out/lib" name ".a", objs);
 
 void build_kdb_common(void) {
     cc("common/aho-kmp.c", "out/common/aho-kmp.o");
@@ -42,7 +43,7 @@ void build_kdb_common(void) {
 }
 
 void link_kdb_common(void) {
-    ld("out/libkdb-common.so", (char*[]){
+    ldlib("kdb-common", ((char*[]){
         "out/common/aho-kmp.o",
         "out/common/base64.o",
         "out/common/common-data.o",
@@ -67,7 +68,7 @@ void link_kdb_common(void) {
         "out/common/utf8_utils.o",
         "out/common/word-split.o",
         "out/common/xz_dec.o", 0
-    }, shared_lib, COMPILER_CC);
+    }), COMPILER_CC);
 }
 
 void build_kdb_vv(void) {
@@ -80,14 +81,14 @@ void build_kdb_vv(void) {
 }
 
 void link_kdb_vv(void) {
-    ld("out/libkdb-vv.so", (char*[]){
+    ldlib("kdb-vv", ((char*[]){
         "out/vv/am-amortization.o",
         "out/vv/am-hash.o",
         "out/vv/am-server-functions.o",
         "out/vv/am-stats.o",
         "out/vv/vv-tl-aio.o",
         "out/vv/vv-tl-parse.o", 0
-    }, shared_lib, COMPILER_CC);
+    }), COMPILER_CC);
 }
 
 void build_kdb_crypto(void) {
@@ -95,7 +96,7 @@ void build_kdb_crypto(void) {
 }
 
 void link_kdb_crypto(void) {
-    ld("out/libkdb-crypto.so", (char*[]){ "out/crypto/aesni256.o", 0 }, shared_lib, COMPILER_CC);
+    ldlib("kdb-crypto", ((char*[]){ "out/crypto/aesni256.o", 0 }), COMPILER_CC);
 }
 
 void build_kdb_net(void) {
@@ -126,7 +127,7 @@ void build_kdb_net(void) {
 }
 
 void link_kdb_net(void) {
-    ld("out/libkdb-net.so", (char*[]){
+    ldlib("kdb-net", ((char*[]){
         "out/net/net-aio.o",
         "out/net/net-buffers.o",
         "out/net/net-connections.o",
@@ -151,7 +152,7 @@ void link_kdb_net(void) {
         "out/net/net-tcp-rpc-server.o",
         "out/net/net-udp.o",
         "out/net/net-udp-targets.o", 0
-    }, shared_lib, COMPILER_CC);
+    }), COMPILER_CC);
 }
 
 void build_kdb_binlog(void) {
@@ -159,7 +160,7 @@ void build_kdb_binlog(void) {
 }
 
 void link_kdb_binlog(void) {
-    ld("out/libkdb-binlog.so", (char*[]){ "out/binlog/kdb-binlog-common.o", 0 }, shared_lib, COMPILER_CC);
+    ldlib("kdb-binlog", ((char*[]){ "out/binlog/kdb-binlog-common.o", 0 }), COMPILER_CC);
 }
 
 void build_kdb_kfs(void) {
@@ -167,7 +168,7 @@ void build_kdb_kfs(void) {
 }
 
 void link_kdb_kfs(void) {
-    ld("out/libkdb-kfs.so", (char*[]){ "out/kfs/kfs.o", 0 }, shared_lib, COMPILER_CC);
+    ldlib("kdb-kfs", ((char*[]){ "out/kfs/kfs.o", 0 }), COMPILER_CC);
 }
 
 void build_random_engine(void) {
@@ -178,7 +179,13 @@ void build_random_engine(void) {
 void link_random_engine(void) {
     ld("out/random-engine", (char*[]){
         "out/random/random-data.o",
-        "out/random/random-engine.o", 0
+        "out/random/random-engine.o",
+        "out/libkdb-vv.a",
+        "out/libkdb-net.a",
+        "out/libkdb-kfs.a",
+        "out/libkdb-crypto.a",
+        "out/libkdb-common.a",
+        "out/libkdb-binlog.a", 0
     }, kdb_binary, COMPILER_CC);
 }
 
@@ -190,7 +197,13 @@ void build_dns_engine(void) {
 void link_dns_engine(void) {
     ld("out/dns-engine", (char*[]){
         "out/dns/dns-data.o",
-        "out/dns/dns-engine.o", 0
+        "out/dns/dns-engine.o",
+        "out/libkdb-vv.a",
+        "out/libkdb-net.a",
+        "out/libkdb-kfs.a",
+        "out/libkdb-crypto.a",
+        "out/libkdb-common.a",
+        "out/libkdb-binlog.a", 0
     }, kdb_binary, COMPILER_CC);
 }
 
@@ -202,7 +215,13 @@ void build_lists_engine(void) {
 void link_lists_engine(void) {
     ld("out/lists-engine", (char*[]){
         "out/lists/lists-data.o",
-        "out/lists/lists-engine.o", 0
+        "out/lists/lists-engine.o",
+        "out/libkdb-vv.a",
+        "out/libkdb-net.a",
+        "out/libkdb-kfs.a",
+        "out/libkdb-crypto.a",
+        "out/libkdb-common.a",
+        "out/libkdb-binlog.a", 0
     }, kdb_binary, COMPILER_CC);
 }
 
@@ -248,29 +267,18 @@ void link_kphp_compiler(void) {
         "out/KPHP/compiler/type-inferer-core.o",
         "out/KPHP/compiler/type-inferer.o",
         "out/KPHP/compiler/types.o",
-        "out/KPHP/compiler/vertex.o", 0
+        "out/KPHP/compiler/vertex.o",
+        "out/libkdb-common.a",
+        "out/libdrinkless.a", 0
     }, kphp_binary, COMPILER_CXX);
 }
 
-void build_kphp_engine(void) {
+void build_kphp_runtime(void) {
     cc("KPHP/php-engine.c", "out/KPHP/php-engine.o");
     cc("KPHP/php-engine-vars.c", "out/KPHP/php-engine-vars.o");
     cxx("KPHP/php-queries.cpp", "out/KPHP/php-queries.o");
     cxx("KPHP/php-runner.cpp", "out/KPHP/php-runner.o");
     cxx("KPHP/php-master.cpp", "out/KPHP/php-master.o");
-}
-
-void link_kphp_engine(void) {
-    ld("out/kphp-engine.o", (char*[]){
-        "out/KPHP/php-engine.o",
-        "out/KPHP/php-engine-vars.o",
-        "out/KPHP/php-queries.o",
-        "out/KPHP/php-runner.o",
-        "out/KPHP/php-master.o", 0
-    }, kphp_engine, COMPILER_CXX);
-}
-
-void build_kphp_runtime(void) {
     cxx("KPHP/php_script.cpp", "out/KPHP/php_script.o");
     cxx("KPHP/runtime/allocator.cpp", "out/KPHP/runtime/allocator.o");
     cxx("KPHP/runtime/array_functions.cpp", "out/KPHP/runtime/array_functions.o");
@@ -292,7 +300,7 @@ void build_kphp_runtime(void) {
 }
 
 void link_kphp_runtime(void) {
-    ld("out/libkphp-runtime.so", (char*[]){
+    ldlib("kphp-runtime", ((char*[]){
         "out/KPHP/php_script.o",
         "out/KPHP/runtime/allocator.o",
         "out/KPHP/runtime/array_functions.o",
@@ -311,7 +319,35 @@ void link_kphp_runtime(void) {
         "out/KPHP/runtime/string_functions.o",
         "out/KPHP/runtime/url.o",
         "out/KPHP/runtime/zlib.o", 0
-    }, shared_lib, COMPILER_CXX);
+    }), COMPILER_CXX);
+}
+
+void link_kphp_engine(void) {
+    ld("out/kphp-engine.o", (char*[]){
+        "out/KPHP/php-engine.o",
+        "out/KPHP/php-engine-vars.o",
+        "out/KPHP/php-queries.o",
+        "out/KPHP/php-runner.o",
+        "out/KPHP/php-master.o",
+        "out/KPHP/php_script.o",
+        "out/KPHP/runtime/allocator.o",
+        "out/KPHP/runtime/array_functions.o",
+        "out/KPHP/runtime/bcmath.o",
+        "out/KPHP/runtime/datetime.o",
+        "out/KPHP/runtime/drivers.o",
+        "out/KPHP/runtime/exception.o",
+        "out/KPHP/runtime/files.o",
+        "out/KPHP/runtime/interface.o",
+        "out/KPHP/runtime/math_functions.o",
+        "out/KPHP/runtime/mbstring.o",
+        "out/KPHP/runtime/misc.o",
+        "out/KPHP/runtime/openssl.o",
+        "out/KPHP/runtime/regexp.o",
+        "out/KPHP/runtime/rpc.o",
+        "out/KPHP/runtime/string_functions.o",
+        "out/KPHP/runtime/url.o",
+        "out/KPHP/runtime/zlib.o", 0
+    }, kphp_engine, COMPILER_CXX);
 }
 
 void build_drinkless(void) {
@@ -319,7 +355,7 @@ void build_drinkless(void) {
 }
 
 void link_drinkless(void) {
-    ld("out/libdrinkless.so", (char*[]){ "out/drinkless/dl-utils-lite.o", 0 }, shared_lib, COMPILER_CC);
+    ldlib("drinkless", ((char*[]){ "out/drinkless/dl-utils-lite.o", 0 }), COMPILER_CC);
 }
 
 void build_component(char *component) {
@@ -332,11 +368,10 @@ void build_component(char *component) {
     if (strcmp(component, "kfs") == 0 || all) build_kdb_kfs();
     if (strcmp(component, "drinkless") == 0 || all) build_drinkless();
     if (strcmp(component, "random-engine") == 0 || all) build_random_engine();
-    //if (strcmp(component, "dns-engine") == 0 || all) build_dns_engine();
-    //if (strcmp(component, "lists-engine") == 0 || all) build_lists_engine();
+    if (strcmp(component, "dns-engine") == 0 || all) build_dns_engine();
+    if (strcmp(component, "lists-engine") == 0 || all) build_lists_engine();
     if (strcmp(component, "kphp-compiler") == 0 || all) build_kphp_compiler();
-    if (strcmp(component, "kphp-runtime") == 0 || all) build_kphp_runtime();
-    if (strcmp(component, "kphp-engine") == 0 || all) build_kphp_engine();
+    if (strcmp(component, "kphp-runtime") == 0 || strcmp(component, "kphp-engine") == 0 || all) build_kphp_runtime();
 }
 
 void link_component_base(char *component) {
@@ -353,8 +388,8 @@ void link_component_base(char *component) {
 void link_component_engine(char *component) {
     int all = strcmp(component, "all") == 0;
     if (strcmp(component, "random-engine") == 0 || all) link_random_engine();
-    //if (strcmp(component, "dns-engine") == 0 || all) link_dns_engine();
-    //if (strcmp(component, "lists-engine") == 0 || all) link_lists_engine();
+    if (strcmp(component, "dns-engine") == 0 || all) link_dns_engine();
+    if (strcmp(component, "lists-engine") == 0 || all) link_lists_engine();
 }
 
 void link_component_kphp(char *component) {

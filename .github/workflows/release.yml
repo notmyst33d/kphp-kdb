@@ -9,6 +9,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
+    - name: Install dependencies
+      run: apt install -y libre2-dev libpcre-dev libssl-dev
     - name: Create TL constants
       run: mkdir -p objs/TL objs/bin && make objs/TL/constants.h
     - name: Build

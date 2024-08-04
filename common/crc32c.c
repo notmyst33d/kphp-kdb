@@ -305,73 +305,6 @@ unsigned crc32c_slow (unsigned crc, const void *data, int len) {
   return ~crc32c_partial_old (data, len, ~crc);
 }
 
-#ifdef __LP64__
-static unsigned crc32c_partial_sse42 (const void *data, int len, unsigned crc) {
-  const char *p = data;
-  unsigned long long c = crc;
-  while ((((uintptr_t) data) & 7) && (len > 0)) {
-    asm volatile (
-       "crc32b (%2), %1\n\t"
-     : "=r" (c)
-     : "0"  (c), "r" (p)
-    );
-    p++;
-    len--;
-  }
-  while (len >= 8) {
-    asm volatile (
-       "crc32q (%2), %1\n\t"
-     : "=r" (c)
-     : "0"  (c), "r" (p)
-    );
-    p += 8;
-    len -= 8;
-  }
-  while (len > 0) {
-    asm volatile (
-       "crc32b (%2), %1\n\t"
-     : "=r" (c)
-     : "0"  (c), "r" (p)
-    );
-    p++;
-    len--;
-  }
-  return c;
-}
-#else
-static unsigned crc32c_partial_sse42 (const void *data, int len, unsigned crc) {
-  const char *p = data;
-  while ((((uintptr_t) data) & 3) && (len > 0)) {
-    asm volatile (
-       "crc32b (%2), %1\n\t"
-     : "=r" (crc)
-     : "0"  (crc), "r" (p)
-    );
-    p++;
-    len--;
-  }
-  while (len >= 4) {
-    asm volatile (
-       "crc32l (%2), %1\n\t"
-     : "=r" (crc)
-     : "0"  (crc), "r" (p)
-    );
-    p += 4;
-    len -= 4;
-  }
-  while (len > 0) {
-    asm volatile (
-       "crc32b (%2), %1\n\t"
-     : "=r" (crc)
-     : "0"  (crc), "r" (p)
-    );
-    p++;
-    len--;
-  }
-  return crc;
-}
-#endif
-
 static unsigned crc32c_partial_four_tables (const void *data, int len, unsigned crc) {
   const int *p = (const int *) data;
   int x;
@@ -409,13 +342,7 @@ static unsigned crc32c_partial_four_tables (const void *data, int len, unsigned 
   return crc;
 }
 
-static unsigned crc32c_partial_cpuid (const void *data, int len, unsigned crc) {
-  vk_cpuid_t *p = vk_cpuid ();
-  crc32c_partial = (p->ecx & (1 << 20)) ? &crc32c_partial_sse42 : &crc32c_partial_four_tables;
-  return crc32c_partial (data, len, crc);
-}
-
-unsigned (*crc32c_partial) (const void *data, int len, unsigned crc) = &crc32c_partial_cpuid;
+unsigned (*crc32c_partial) (const void *data, int len, unsigned crc) = &crc32c_partial_four_tables;
 
 unsigned compute_crc32c (const void *data, int len) {
   return crc32c_partial (data, len, -1) ^ -1;

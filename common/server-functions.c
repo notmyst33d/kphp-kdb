@@ -841,15 +841,3 @@ void kprintf (const char *format, ...) {
     va_end (ap);
   }
 }
-
-vk_cpuid_t *vk_cpuid (void) {
-  static vk_cpuid_t cached = { .computed = 0 };
-  if (!cached.computed++) {
-    int a;
-    asm ("cpuid\n\t"
-        : "=a" (a), "=b" (cached.ebx) , "=c" (cached.ecx), "=d" (cached.edx)
-        : "0" (1)
-    );
-  }
-  return &cached;
-}

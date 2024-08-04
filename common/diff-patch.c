@@ -35,12 +35,9 @@
 //#define DIFF_DEBUG
 
 static inline int bsr (int i) {
-  int r, t;
-  asm("bsr %1,%0\n\t"
-    : "=&q" (r), "=&q" (t)
-    : "1" (i)
-    : "cc");
-  return r;
+  int j;
+  for (j = 31; j > 0 && ((i >> j) & 1) == 0; j--) {}
+  return j;
 }
 
 typedef struct {

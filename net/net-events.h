@@ -30,7 +30,6 @@
 #include <time.h>
 #include <errno.h>
 #include <limits.h>
-#include <sys/io.h>
 #include <sys/epoll.h>
 
 #ifndef EPOLLRDHUP

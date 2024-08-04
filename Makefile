@@ -27,7 +27,7 @@ endif
 # CWARN = -Wall -Werror -Wno-error=unused-result -Wno-error=unused-but-set-variable
 CWARN = -Wall
 
-CFLAGS = ${CWARN} ${OPT} ${MF} -march=core2 -mfpmath=sse -mssse3 -ggdb -fno-strict-aliasing -fno-strict-overflow -fwrapv -fcommon ${PROFC}
+CFLAGS = ${CWARN} ${OPT} -ggdb -fno-strict-aliasing -fno-strict-overflow -fwrapv -fcommon ${PROFC}
 
 ifeq (${fp}, 1)
 CFLAGS := ${CFLAGS} -fno-omit-frame-pointer
@@ -36,7 +36,7 @@ endif
 CXXFLAGS = ${CFLAGS} -std=gnu++17 -fno-omit-frame-pointer
 
 DFLAGS = -M
-LDFLAGS = ${MF} -ggdb -rdynamic ${PROF} -lm -lrt -lcrypto -lz -lpthread
+LDFLAGS = -ggdb -rdynamic ${PROF} -lm -lrt -lcrypto -lz -lpthread
 LDFLAGSSSL	= ${LDFLAGS} -lcrypto
 
 LDFLAGSGM := ${GM_LIBS_FLAGS} ${LDFLAGS} -l:libGraphicsMagick.a -l:libtiff.a -l:libfreetype.a -l:libjasper.a -l:libjpeg.a -l:libpng.a -l:libbz2.a -lz -lm -l:libgomp.a -lpthread

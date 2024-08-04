@@ -34,12 +34,9 @@ const int listcomp_version = 0x0000000c;
 #define	decode_load_bit()	{ m <<= 1; if (unlikely(m == (-1 << 31))) { m = ((int) *br->ptr++ << 24) + (1 << 23); } }
 
 static inline int bsr (int i) {
-  int r, t;
-  asm("bsr %1,%0\n\t"
-    : "=&q" (r), "=&q" (t)
-    : "1" (i)
-    : "cc");
-  return r;
+  int j;
+  for (j = 31; j > 0 && ((i >> j) & 1) == 0; j--) {}
+  return j;
 }
 
 /*********************** bitwriter *****************************/

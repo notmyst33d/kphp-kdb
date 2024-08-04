@@ -1,9 +1,9 @@
-//usr/bin/cc -x c -O2 -Wall -pthread -o .buildbin "$0" && ./.buildbin $@; exit
+//usr/bin/cc -x c -O2 -Wall -DCOMMIT=\"$(git rev-parse HEAD)\" -pthread -o .buildbin "$0" && ./.buildbin $@; exit
 
 #include "ez.h"
 
-char *cc_compile_flags[] = { "-pipe", "-g", "-std=gnu89", "-fPIC", "-fcommon", "-I.", "-Ivv", "-Ikfs", "-Inet", "-Iobjs", "-Icommon", "-Ibinlog", "-Idrinkless", "-I/usr/include/openssl-1.1", "-DCOMMIT=\"none\"", 0 };
-char *cxx_compile_flags[] = { "-pipe", "-g", "-std=gnu++17", "-fPIC", "-fcommon", "-I.", "-Ivv", "-Ikfs", "-Inet", "-Iobjs", "-Icommon", "-Ibinlog", "-Idrinkless", "-I/usr/include/openssl-1.1", "-DCOMMIT=\"none\"", 0 };
+char *cc_compile_flags[] = { "-pipe", "-g", "-std=gnu89", "-fPIC", "-fcommon", "-I.", "-Ivv", "-Ikfs", "-Inet", "-Iobjs", "-Icommon", "-Ibinlog", "-Idrinkless", "-DCOMMIT=\"" COMMIT "\"", 0 };
+char *cxx_compile_flags[] = { "-pipe", "-g", "-std=gnu++17", "-fPIC", "-fcommon", "-I.", "-Ivv", "-Ikfs", "-Inet", "-Iobjs", "-Icommon", "-Ibinlog", "-Idrinkless", "-DCOMMIT=\"" COMMIT "\"", 0 };
 
 char *shared_lib[] = { "-shared", 0 };
 char *kdb_binary[] = { "-Lout", "-lm", "-lz", "-lcrypto", 0 };

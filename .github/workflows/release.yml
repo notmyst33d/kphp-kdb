@@ -28,5 +28,5 @@ jobs:
           out/*-engine
           out/lib*.so
           out/lib*.a
-          kphp-engine.o
-          kphp2cpp
+          out/kphp-engine.o
+          out/kphp2cpp

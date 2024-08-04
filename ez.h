@@ -233,13 +233,13 @@ void queue_link(CommandQueue *queue, char *out, char **objs, char **flags, Compi
 #ifdef USE_LD
     cmd_push(cmd, "-fuse-ld=" LD);
 #endif
-    for (int i = 0; flags[i] != 0; i++) {
-        cmd_push(cmd, flags[i]);
-    }
     cmd_push(cmd, "-o");
     cmd_push(cmd, out);
     for (int i = 0; objs[i] != 0; i++) {
         cmd_push(cmd, objs[i]);
+    }
+    for (int i = 0; flags[i] != 0; i++) {
+        cmd_push(cmd, flags[i]);
     }
 
     queue_push(queue, cmd);

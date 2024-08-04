@@ -53,19 +53,19 @@ typedef struct {
 } Command;
 
 Command *cmd_new(void) {
-    Command *cmd = malloc(sizeof(Command));
+    Command *cmd = (Command*)malloc(sizeof(Command));
     memset(cmd, 0, sizeof(Command));
     return cmd;
 }
 
-void cmd_push(Command *cmd, char *arg) {
+void cmd_push(Command *cmd, const char *arg) {
     if (cmd->args == 0) {
-        cmd->args = malloc(2 * sizeof(char*));
+        cmd->args = (char**)malloc(2 * sizeof(char*));
     } else {
-        cmd->args = realloc(cmd->args, (cmd->length + 2) * sizeof(char*));
+        cmd->args = (char**)realloc(cmd->args, (cmd->length + 2) * sizeof(char*));
     }
     size_t len = strlen(arg) + 1;
-    cmd->args[cmd->length] = malloc(len);
+    cmd->args[cmd->length] = (char*)malloc(len);
     strncpy(cmd->args[cmd->length], arg, len);
     cmd->length += 1;
     cmd->args[cmd->length] = 0;
@@ -73,7 +73,7 @@ void cmd_push(Command *cmd, char *arg) {
 
 void cmd_message(Command *cmd, char *message) {
     size_t len = strlen(message) + 1;
-    cmd->message = malloc(len);
+    cmd->message = (char*)malloc(len);
     strncpy(cmd->message, message, len);
 }
 
@@ -114,7 +114,7 @@ CommandQueue global_queue = { 0 };
 
 void queue_push(CommandQueue *queue, Command *cmd) {
     pthread_mutex_lock(&queue->mutex);
-    queue->cmds = realloc(queue->cmds, (queue->size + 1) * sizeof(Command*));
+    queue->cmds = (Command**)realloc(queue->cmds, (queue->size + 1) * sizeof(Command*));
     queue->cmds[queue->size] = cmd;
     queue->size += 1;
     pthread_mutex_unlock(&queue->mutex);
@@ -133,7 +133,7 @@ Command *queue_pop(CommandQueue *queue) {
 }
 
 void *queue_worker(void *queue_ptr) {
-    CommandQueue *queue = queue_ptr;
+    CommandQueue *queue = (CommandQueue*)queue_ptr;
     while (!fail) {
         Command *cmd = queue_pop(queue);
         if (cmd == 0) {

@@ -7,6 +7,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
     - uses: actions/checkout@v4
     - name: Install dependencies
@@ -19,6 +21,8 @@ jobs:
       uses: softprops/action-gh-release@v2
       with:
         name: KDB alpha ${{ github.sha }}
+        tag_name: nightly
+        make_latest: true
         prerelease: true
         files: |
           out/*-engine

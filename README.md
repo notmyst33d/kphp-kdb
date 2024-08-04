@@ -4,10 +4,10 @@
 ## Как собрать
 Билд система работает только на Linux, как впринципе и сам KDB + KPHP
 
-Система должна иметь libz, libre2, libpcre и openssl 1.1
+Система должна иметь libz, libre2, libpcre и openssl
 
 ```
-$ mkdir -p objs/TL
+$ mkdir -p objs/TL objs/bin
 $ make objs/TL/constants.h
 $ ./ezfile.c
 $ ./kphp_program_ezfile.c

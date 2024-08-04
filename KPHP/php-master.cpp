@@ -1602,7 +1602,7 @@ int php_master_get_end (struct connection *c, int key_cnt) {
 }
 
 int php_master_version (struct connection *c) {
-  write_out (&c->Out, "VERSION "PHP_MASTER_VERSION"\r\n", 9 + sizeof (PHP_MASTER_VERSION));
+  write_out (&c->Out, "VERSION " PHP_MASTER_VERSION "\r\n", 9 + sizeof (PHP_MASTER_VERSION));
   return 0;
 }
 

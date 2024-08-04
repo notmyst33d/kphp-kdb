@@ -53,7 +53,7 @@
 #define COMMIT "unknown"
 #endif
 
-#define	VERSION_STR	"dns-engine-test-1.00-r16"
+#define	VERSION_STR	"dns-engine-1.00-r16"
 const char FullVersionStr[] = VERSION_STR " compiled at " __DATE__ " " __TIME__ " by gcc " __VERSION__ " "
 #ifdef __LP64__
   "64-bit"

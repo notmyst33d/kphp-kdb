@@ -13,5 +13,13 @@ nohup.out
 *~
 *.err
 *.out
-.buildbin
-out
+*-engine
+tlc-new
+kphp2cpp
+.sconsign.dblite
+TL/constants.h
+kphp_program/kphp
+kphp_program/main
+combined.tl
+combined2.tl
+*.a

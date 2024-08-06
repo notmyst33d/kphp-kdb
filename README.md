@@ -2,24 +2,17 @@
 Древние движки ВК из 2014 года
 
 ## Как собрать
-Билд система работает только на Linux, как впринципе и сам KDB + KPHP
+Система должна иметь libz, libre2, libpcre, openssl и scons для сборки.
 
-Система должна иметь libz, libre2, libpcre и openssl
-
+Всё что нужно для того чтобы собрать всё:
 ```
-$ mkdir -p objs/TL objs/bin
-$ make objs/TL/constants.h
-$ ./ezfile.c
-$ ./kphp_program_ezfile.c
+$ scons
 ```
-
-ezfile.c пока что не умеет собирать всё сам, пока что нужен make для сборки constants.h
 
 ## Как запустить
 ```
-$ export LD_LIBRARY_PATH=out
-$ ./out/random-engine -vvvv -p 11211 ./out/random.bin &
-$ ./out/kphp_program/main -q -H 10203
+$ ./random-engine -vvvv -p 11211 ./random.bin &
+$ ./main -q -H 10203
 ```
 
 Результат:  

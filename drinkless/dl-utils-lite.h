@@ -21,7 +21,6 @@
 
 #pragma once
 #include <signal.h>
-#include <time.h>
 
 #ifndef likely
 #define likely(x) __builtin_expect ((x),1)
@@ -101,12 +100,25 @@ unsigned long long get_pid_start_time (pid_t pid);
 int get_cpu_total (unsigned long long *cpu_total);
 
 /* RDTSC */
+#if defined(__i386__)
 static __inline__ unsigned long long dl_rdtsc(void) {
-  struct timespec T;
-  assert (clock_gettime (CLOCK_REALTIME, &T) >= 0);
-  double res = T.tv_sec + (double) T.tv_nsec * 1e-9;
-  return ((unsigned long long)(res * (1ULL << 32)));
+  unsigned long long int x;
+  __asm__ volatile ("rdtsc" : "=A" (x));
+  return x;
 }
+#elif defined(__x86_64__)
+static __inline__ unsigned long long dl_rdtsc(void) {
+  unsigned hi, lo;
+  __asm__ __volatile__ ("rdtsc" : "=a"(lo), "=d"(hi));
+  return ( (unsigned long long)lo)|( ((unsigned long long)hi)<<32 );
+}
+#elif defined(__aarch64__)
+static __inline__ unsigned long long dl_rdtsc(void) {
+  unsigned long long x;
+  __asm__ __volatile__ ("mrs %0, cntvct_el0" : "=r" (x));
+  return x * 33.52797591730298; // Magic value :3
+}
+#endif
 
 #ifdef __cplusplus
 }

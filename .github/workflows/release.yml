@@ -12,11 +12,11 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Install dependencies
-      run: sudo apt install -y libre2-dev libpcre2-dev libssl-dev zlib1g-dev
+      run: sudo apt install -y libre2-dev libpcre2-dev libssl-dev zlib1g-dev scons
     - name: Create TL constants
       run: mkdir -p objs/TL objs/bin && make objs/TL/constants.h
     - name: Build
-      run: ./ezfile.c
+      run: .scons
     - name: Release
       uses: softprops/action-gh-release@v2
       with:
@@ -25,8 +25,7 @@ jobs:
         make_latest: true
         prerelease: true
         files: |
-          out/*-engine
-          out/lib*.so
-          out/lib*.a
-          out/kphp-engine.o
-          out/kphp2cpp
+          *-engine
+          *.so
+          *.a
+          kphp2cpp

@@ -16,7 +16,7 @@ jobs:
     - name: Build
       run: scons -j$(nproc --all)
     - name: Bundle KPHP SDK
-      run: zip -r9 kphp-sdk.zip KPHP/*.h KPHP/runtime/*.h KPHP/runtime/array.cpp KPHP/runtime/class.cpp KPHP/runtime/variable.cpp KPHP/runtime/string.cpp KPHP/runtime/string_buffer.cpp common/fast-backtrace.h libkphp-runtime.a libkphp-engine.a kphp2cpp
+      run: zip -r9 kphp-sdk.zip KPHP/functions.txt KPHP/*.h KPHP/runtime/*.h KPHP/runtime/array.cpp KPHP/runtime/class.cpp KPHP/runtime/variable.cpp KPHP/runtime/string.cpp KPHP/runtime/string_buffer.cpp common/fast-backtrace.h libkphp-runtime.a libkphp-engine.a kphp2cpp
     - name: Release
       uses: softprops/action-gh-release@v2
       with:

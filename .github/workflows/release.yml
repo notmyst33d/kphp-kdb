@@ -12,7 +12,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Install dependencies
-      run: sudo apt install -y libre2-dev libpcre2-dev libssl-dev zlib1g-dev GraphicsMagick-devel libwebp-devel scons
+      run: sudo apt install -y libre2-dev libpcre2-dev libssl-dev zlib1g-dev libgraphicsmagick1-dev libwebp-dev scons
     - name: Build
       run: scons -j$(nproc --all)
     - name: Release

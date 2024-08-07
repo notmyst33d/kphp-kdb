@@ -19,7 +19,7 @@ kphp2cpp
 .sconsign.dblite
 TL/constants.h
 kphp_program/kphp
-kphp_program/main
+kphp_program/build
 combined.tl
 combined2.tl
 *.a

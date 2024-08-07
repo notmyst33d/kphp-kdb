@@ -1,18 +1,19 @@
 # Kitten DB + Kitten PHP
-Древние движки ВК из 2014 года
+Old VK "engines" from 2014
 
-## Как собрать
-Система должна иметь libz, libre2, libpcre, openssl и scons для сборки.
+## Building
+Requirements: libz, libre2, libpcre, openssl and scons.
 
-Всё что нужно для того чтобы собрать всё:
 ```
 $ scons
+$ cd kphp_program
+$ ./build.sh
 ```
 
-## Как запустить
+## Running a simple KPHP program
 ```
 $ ./random-engine -vvvv -p 11211 ./random.bin &
-$ ./main -q -H 10203
+$ ./kphp_program/build/main -q -H 10203
 ```
 
 Результат:  
